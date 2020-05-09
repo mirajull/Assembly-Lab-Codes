@@ -1,0 +1,161 @@
+.MODEL SMALL
+
+.STACK 100H
+
+.DATA
+ASOL_CHAR1 DB ?
+ASOL_CHAR2 DB ?
+NOKOL_CHAR1 DB ?
+NOKOL_CHAR2 DB ?
+MSG DW 'Both of inputs are not letters.$'
+
+.CODE
+MAIN PROC
+    
+    MOV AX,@DATA
+    MOV DS,AX
+    
+RESTART:    
+    
+    MOV AH,1
+    INT 21H
+    MOV ASOL_CHAR1,AL
+    
+    INT 21H
+    
+    INT 21H
+    MOV ASOL_CHAR2,AL
+    
+    MOV AH,2
+    MOV DL,10
+    INT 21H
+    MOV DL,13
+    INT 21H
+    
+    
+    CMP ASOL_CHAR1,65
+    JL DISPLAY
+    
+    CMP ASOL_CHAR1,90
+    JG KICHU_TEST
+    
+    CMP ASOL_CHAR2,65
+    JL DISPLAY
+    
+    CMP ASOL_CHAR2,90
+    JG KICHU_TEST1
+    
+ASOL_JAYGA:    
+    
+    CMP ASOL_CHAR1,97
+    JL PROTHOMTA
+    MOV AL,ASOL_CHAR1
+    MOV NOKOL_CHAR1,AL
+    JMP ERPOR
+    
+PROTHOMTA:
+    MOV AL,ASOL_CHAR1
+    ADD AL,32
+    MOV NOKOL_CHAR1,AL
+    
+ERPOR:
+            
+    CMP ASOL_CHAR2,97
+    JL PROTHOMTA1
+    MOV AL,ASOL_CHAR2
+    MOV NOKOL_CHAR2,AL
+    JMP ERPOR1
+    
+PROTHOMTA1:
+    MOV AL,ASOL_CHAR2
+    ADD AL,32
+    MOV NOKOL_CHAR2,AL    
+    
+ERPOR1:
+
+    
+    MOV BL,NOKOL_CHAR2
+    CMP NOKOL_CHAR1,BL
+    JE EQUALITY
+    JL LESS
+    JG GREATER
+    
+    
+    
+    
+    
+    
+EQUALITY:
+    MOV CX,4
+    MOV DL,ASOL_CHAR1
+    
+PRINT:
+    MOV AH,2
+    INT 21H
+    INC DL
+    LOOP PRINT
+    JMP END_PROC
+    
+LESS:
+    MOV BL,NOKOL_CHAR2
+    SUB BL,NOKOL_CHAR1
+    MOV CX,0
+    MOV CL,BL
+    INC CL
+    MOV DL,ASOL_CHAR1
+ABAR_PRINT:
+
+    MOV AH,2
+    INT 21H
+    INC DL
+    LOOP ABAR_PRINT
+    JMP END_PROC
+    
+GREATER:
+    MOV BL,NOKOL_CHAR1
+    SUB BL,NOKOL_CHAR2
+    MOV CX,0
+    MOV CL,BL
+    INC CL
+    MOV DL,ASOL_CHAR2
+    
+AREKTA_PRINT:
+    MOV AH,2
+    INT 21H
+    INC DL
+    LOOP AREKTA_PRINT
+    JMP END_PROC       
+    
+KICHU_TEST:
+    CMP ASOL_CHAR1,97
+    JL DISPLAY
+    JGE ASOL_JAYGA 
+    
+KICHU_TEST1:
+    CMP ASOL_CHAR2,97
+    JL DISPLAY
+    JGE ASOL_JAYGA       
+                        
+    
+    
+    
+DISPLAY:
+    LEA DX,MSG
+    MOV AH,9
+    INT 21H
+    JMP END_PROC
+    
+    
+END_PROC:
+    MOV AH,2
+    MOV DL,10
+    INT 21H
+    MOV DL,13
+    INT 21H
+    JMP RESTART        
+    
+    MOV AH,4CH
+    INT 21H
+    
+MAIN ENDP
+    END MAIN

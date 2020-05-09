@@ -1,0 +1,42 @@
+.model small
+                                          
+.stack 100h
+
+.DATA  
+
+CHAR DB ?
+
+.CODE
+
+MAIN PROC
+    
+MOV AX,@DATA
+MOV DS,AX
+
+
+MOV AH,1
+INT 21H
+MOV CHAR,AL
+
+NEG CHAR
+SUB CHAR,01H
+
+MOV AH,2
+MOV DL,0DH  ;CARRIAGE RETURN
+INT 21H
+MOV DL,0AH  ;LINE FEED
+INT 21H
+
+MOV AH,2
+MOV DL,CHAR
+INT 21H
+
+
+         
+;TERMINATION         
+MOV AH,4CH
+INT 21H
+
+MAIN ENDP
+END MAIN
+
